@@ -1,0 +1,45 @@
+
+version: '2.2'
+
+services:
+  app:
+    # dockerfile: Dockerfile
+    build:
+      dockerfile: Dockerfile
+      context: .
+    environment:
+      - PORT=2567
+    ports:
+      - "2567:2567"
+    volumes:
+      - "./src:/usr/src/app/src"
+    depends_on:
+      - db
+    networks:
+      - teenpati
+
+  db:
+    image: mysql
+    restart: always
+    ports:  
+      - "3306:3306"
+    environment:
+      - MYSQL_DATABASE=teenpatti
+      - MYSQL_ROOT_PASSWORD=teenpatti@liopix
+    volumes:
+      - ./db-scripts:/docker-entrypoint-initdb.d
+      - ./mysql_db_data_container:/var/lib/mysql
+
+    networks:
+      - teenpati
+
+  adminer_container:
+    image: adminer
+    ports:
+      - 8080:8080
+    networks:
+      - teenpati
+        
+networks:
+  teenpati:
+    driver: bridge

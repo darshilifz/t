@@ -1,0 +1,24 @@
+{
+   "type": "mysql",
+   "host": "localhost",
+   "port": 3306,
+   "username": "root",
+   "password": "teenpatti@liopix",
+   "database": "teenpatti",
+   "synchronize":true,
+   "logging": true,
+   "entities": [   
+      "dbscripts/src/entity/**/*.ts"
+   ],
+   "migrations": [ 
+      "dbscripts/src/migration/**/*.ts"
+   ],
+   "subscribers": [
+      "dbscripts/src/subscriber/**/*.ts"
+   ],
+   "cli": {
+      "entitiesDir": "dbscripts/src/entity",
+      "migrationsDir": "dbscripts/src/migration",
+      "subscribersDir": "dbscripts/src/subscriber"
+   }
+}
