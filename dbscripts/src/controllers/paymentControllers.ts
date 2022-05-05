@@ -53,11 +53,14 @@ async function imageUpload(req, res, next) {
     payment.Remark = "";
     payment.Status = 2;
 
-    await connection.manager.save(payment);
+    const Payment1=await connection.manager.save(payment);
 
     console.log("imageUpload:", payment.User_Id.User_Id);
+if(Payment1){
+    return res.status(200).json({ status: true,message:"Data Upload Successfully" });
+}
+return res.status(409).json({status:false,message:"Data not uploaded"});
 
-    res.status(200).json({ status: 2 });
   } catch (error) {
     console.log(error);
     throw new InternalServerError();
@@ -96,9 +99,9 @@ async function payInStatus(req, res, next) {
     //   }
 
     if (payment) {
-      return res.status(200).json(payment);
+      return res.status(200).json({status:true,payment});
     }
-    throw new NotFoundError("Data Does not exists");
+    return res.status(404).json({status:false,message:"Data not found"});
   } catch (error) {
     console.log(error);
     throw new InternalServerError();
@@ -107,13 +110,21 @@ async function payInStatus(req, res, next) {
 
 async function withdrawMoney(req, res, next) {
   console.log("POST /api/withdrawMoney API call made");
-  const { user_id, payment_image, withdraw_amount } = req.body;
+  const { user_id, upi_id, withdraw_amount } = req.body;
   try {
     const connection = await DbUtils.getConnection();
     const exists = await connection.manager.findOne(User_Profile, { where: { User_Id: user_id } });
     if(!exists) {
         return res.status(409).json({ message: 'User is not registered with us, please try another'});
     }
+    const data = await connection.getRepository(User_Profile)
+    .createQueryBuilder()
+    .update(User_Profile)
+    .set({ 
+      User_UPI_Id:upi_id
+    })
+    .where("User_Id = :id", { id: user_id })
+    .execute();
 
     let payment = new Payment();
     payment.User_Id = await connection.manager.findOne(User_Profile, {
@@ -124,15 +135,17 @@ async function withdrawMoney(req, res, next) {
     console.log("withdrawMoney debit:", payment.Is_DebitCredit);
 
     payment.Payment_Amount = withdraw_amount;
-    payment.Payment_Image = payment_image;
+    payment.Payment_Image = "null";
     payment.Remark = "";
     payment.Status = 2;
 
-    await connection.manager.save(payment);
+    const data1=await connection.manager.save(payment);
 
     console.log("withdrawMoney:", payment.User_Id.User_Id);
-
-    res.status(200).json({ status: 2 });
+    if(data1){
+      return res.status(200).json({ status: true,message:"Data Upload Successfully" });
+  }
+  return res.status(409).json({status:false,message:"Data not uploaded"});
   } catch (error) {
     console.log(error);
     throw new InternalServerError();
@@ -158,14 +171,15 @@ async function withdrawStatus(req, res, next) {
     const payment = await connection
     .getRepository(Payment)
     .createQueryBuilder()
+    .select()
     .orderBy("Payment_Time_Date", "DESC")
     .where({ User_Id: user_id, Is_DebitCredit: true })
     .take(50).getRawMany();
 
     if (payment) {
-      return res.status(200).json(payment);
+      return res.status(200).json({status:true,payment});
     }
-    throw new NotFoundError("Data Does not exists");
+    return res.status(404).json({status:false,message:"Data not found"});
   } catch (error) {
     console.log(error);
     throw new InternalServerError();
@@ -181,16 +195,17 @@ async function getUPIId(req, res, next) {
     if(!exists) {
         return res.status(409).json({ message: 'User is not registered with us, please try another'});
     }
-    const user = await connection.manager.find(User_Profile, {
-      where: { User_Id: user_id },
-    });
-
-    if (user) {
+  
+if(exists.User_UPI_Id == null){
+  return res.status(404).json({status:false,message:"Data not found"});
+}
+    if (exists) {
       return res.status(200).json({
-        user_upi_id: user.User_UPI_Id,
+        status:true,
+        user_upi_id: exists.User_UPI_Id,
       });
     }
-    throw new NotFoundError("Data Does not exists");
+    return res.status(404).json({status:false,message:"Data not found"});
   } catch (error) {
     console.log(error);
     throw new InternalServerError();
