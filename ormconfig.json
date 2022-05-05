@@ -5,7 +5,7 @@
    "username": "root",
    "password": "teenpatti@liopix",
    "database": "teenpatti",
-   "synchronize":true,
+   "synchronize":false,
    "logging": true,
    "entities": [   
       "dbscripts/src/entity/**/*.ts"
