@@ -144,7 +144,7 @@ async function withdrawStatus(req, res, next) {
   const { user_id } = req.body;
   try {
     const connection = await DbUtils.getConnection();
-const exists = await connection.manager.findOne(User_Profile, { where: { User_Id: user_id } });
+    const exists = await connection.manager.findOne(User_Profile, { where: { User_Id: user_id } });
                 if(!exists) {
                     return res.status(409).json({ message: 'User is not registered with us, please try another'});
                 }
