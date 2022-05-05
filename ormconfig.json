@@ -3,7 +3,7 @@
    "host": "localhost",
    "port": 3306,
    "username": "root",
-   "password": "darshil123",
+   "password": "teenpatti@liopix",
    "database": "teenpatti",
    "synchronize":false,
    "logging": true,
