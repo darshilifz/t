@@ -54,11 +54,15 @@ async function paymentStatusUpdate(req, res, next) {
   const { user_id, payment_id, amount, status, remark } = req.body;
   try {
     const connection = await DbUtils.getConnection();
+    const exists = await connection.manager.findOne(User_Profile, { where: { User_Id: user_id } });
+    if(!exists) {
+        return res.status(409).json({ message: 'User is not registered with us, please try another'});
+    }
 
-    const exists = await connection.manager.findOne(Payment, {
+    const exists1 = await connection.manager.findOne(Payment, {
       where: { Payment_Id: payment_id, User_Id: user_id },
     });
-    if (!exists) {
+    if (!exists1) {
       return res
         .status(409)
         .json({ message: "Payment is not exist, please try another" });

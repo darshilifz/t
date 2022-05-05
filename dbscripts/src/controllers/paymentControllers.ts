@@ -36,7 +36,10 @@ async function imageUpload(req, res, next) {
   const { user_id, payment_amount, payment_image } = req.body;
   try {
     const connection = await DbUtils.getConnection();
-
+    const exists = await connection.manager.findOne(User_Profile, { where: { User_Id: user_id } });
+    if(!exists) {
+        return res.status(409).json({ message: 'User is not registered with us, please try another'});
+    }
     let payment = new Payment();
     payment.User_Id = await connection.manager.findOne(User_Profile, {
       where: { User_Id: user_id },
@@ -66,7 +69,10 @@ async function payInStatus(req, res, next) {
   const { user_id } = req.body;
   try {
     const connection = await DbUtils.getConnection();
-
+    const exists = await connection.manager.findOne(User_Profile, { where: { User_Id: user_id } });
+    if(!exists) {
+        return res.status(409).json({ message: 'User is not registered with us, please try another'});
+    }
     // const payment = await connection.manager
     //   .find(Payment, {
     //     where: { User_Id: user_id, Is_DebitCredit: false },
@@ -104,6 +110,10 @@ async function withdrawMoney(req, res, next) {
   const { user_id, payment_image, withdraw_amount } = req.body;
   try {
     const connection = await DbUtils.getConnection();
+    const exists = await connection.manager.findOne(User_Profile, { where: { User_Id: user_id } });
+    if(!exists) {
+        return res.status(409).json({ message: 'User is not registered with us, please try another'});
+    }
 
     let payment = new Payment();
     payment.User_Id = await connection.manager.findOne(User_Profile, {
@@ -134,7 +144,10 @@ async function withdrawStatus(req, res, next) {
   const { user_id } = req.body;
   try {
     const connection = await DbUtils.getConnection();
-
+const exists = await connection.manager.findOne(User_Profile, { where: { User_Id: user_id } });
+                if(!exists) {
+                    return res.status(409).json({ message: 'User is not registered with us, please try another'});
+                }
     // const payment = await connection.manager
     //   .find(Payment, {
     //     where: { User_Id: user_id, Is_DebitCredit: true },
@@ -164,7 +177,10 @@ async function getUPIId(req, res, next) {
   const { user_id } = req.body;
   try {
     const connection = await DbUtils.getConnection();
-
+    const exists = await connection.manager.findOne(User_Profile, { where: { User_Id: user_id } });
+    if(!exists) {
+        return res.status(409).json({ message: 'User is not registered with us, please try another'});
+    }
     const user = await connection.manager.find(User_Profile, {
       where: { User_Id: user_id },
     });
