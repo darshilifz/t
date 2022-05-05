@@ -40,6 +40,9 @@ async function imageUpload(req, res, next) {
     if(!exists) {
         return res.status(409).json({status:false, message: 'User is not registered with us, please try another'});
     }
+
+
+    
     let payment = new Payment();
     payment.User_Id = await connection.manager.findOne(User_Profile, {
       where: { User_Id: user_id },
