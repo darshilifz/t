@@ -16,6 +16,9 @@ export class Admin {
     @Column({type : "enum", enum: ["Admin", "SubAdmin"], default: "SubAdmin"})
     Admin_Roles: string;
 
+    @Column({type:"varchar",nullable:true})
+    Admin_UPI_Id:string;
+
     @Column()
     Admin_Password: string;
 }

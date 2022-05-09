@@ -718,7 +718,7 @@ async function adminLogin(req, res, next) {
 
 async function adminCreateAdmin(req, res, next) {
     console.log('POST /api/admin/createadmin API call made');
-    const { admin_name, admin_role, admin_password } = req.body;
+    const { admin_name, admin_role, admin_password,admin_upi_id } = req.body;
 
     try {
         const connection = await DbUtils.getConnection();
@@ -729,6 +729,7 @@ async function adminCreateAdmin(req, res, next) {
         let admin = new Admin();
         admin.Admin_Name = admin_name;
         admin.Admin_Roles = admin_role;
+        admin.Admin_UPI_Id=admin_upi_id;
         admin.Admin_Password = Passwordhash.generate(admin_password);
         await connection.manager.save(admin);
 
@@ -737,7 +738,6 @@ async function adminCreateAdmin(req, res, next) {
         console.log(error);
         throw new InternalServerError()
     }
-
 }
 async function getAllAdmins(req, res, next) {
     console.log('GET /api/admin/admins API call made');
@@ -756,8 +756,6 @@ async function getAllAdmins(req, res, next) {
         console.log(error);
         throw new InternalServerError()
     }
-
-
 }
 async function getAdminFromAdminName(req, res, next) {
     console.log('POST /api/admin/admins API call made');
@@ -784,7 +782,7 @@ async function getAdminFromAdminName(req, res, next) {
 async function updateAdminFromAdminId(req, res, next) {
     console.log('PUT /api/admin/admin API call made');
 
-    const { admin_id, admin_name, admin_role, admin_password } = req.body;
+    const { admin_id, admin_name, admin_role, admin_password,admin_upi_id } = req.body;
 
     try {
         const connection = await DbUtils.getConnection();
@@ -799,6 +797,7 @@ async function updateAdminFromAdminId(req, res, next) {
             .set({
                 Admin_Name: admin_name,
                 Admin_Roles: admin_role,
+                Admin_UPI_Id:admin_upi_id,
                 Admin_Password: Passwordhash.generate(admin_password)
             })
             .where("Admin_Id = :id", { id: admin_id })

@@ -6,6 +6,7 @@ import { InternalServerError, NotFoundError } from "../errors/InstancesCE";
 import { DbUtils } from "../utils/DbUtils";
 import { User_Profile } from "../entity/User_Profile";
 import { Payment } from "../entity/Payment";
+import {Admin} from "../entity/Admin";
 
 //const router = express.Router();
 
@@ -41,8 +42,6 @@ async function imageUpload(req, res, next) {
         return res.status(409).json({status:false, message: 'User is not registered with us, please try another'});
     }
 
-
-    
     let payment = new Payment();
     payment.User_Id = await connection.manager.findOne(User_Profile, {
       where: { User_Id: user_id },
@@ -58,7 +57,7 @@ async function imageUpload(req, res, next) {
 
     const Payment1=await connection.manager.save(payment);
 
-    console.log("imageUpload:", payment.User_Id.User_Id);
+    console.log("UserId imageUpload:", payment.User_Id.User_Id);
 if(Payment1){
     return res.status(200).json({ status: true,message:"Data Upload Successfully" });
 }
@@ -79,18 +78,15 @@ async function payInStatus(req, res, next) {
     if(!exists) {
         return res.status(409).json({ status:false,message: 'User is not registered with us, please try another'});
     }
-    // const payment = await connection.manager
-    //   .find(Payment, {
-    //     where: { User_Id: user_id, Is_DebitCredit: false },
-    //   })
-    //   .limit(50)
-    //   .sort({ Payment_Time_Date: -1 });
+    
     const payment = await connection
       .getRepository(Payment)
       .createQueryBuilder()
       .orderBy("Payment_Time_Date", "DESC")
       .where({ User_Id: user_id, Is_DebitCredit: false })
       .take(50).getRawMany();
+
+    
 
     //  // let data = await connection.getRepository(Payment).find({User_Id:user_id,Is_DebitCredit:false}).limit(1).sort({Payment_Time_Date: -1})
     //   const data1=await connection.createQueryBuilder()
@@ -100,7 +96,7 @@ async function payInStatus(req, res, next) {
     //   if(data1){
     //     return res.status(200).json(data1);
     //   }
-
+    //console.log(payment[0]["Payment_Payment_Id"]);
     if (payment) {
       return res.status(200).json({status:true,payment});
     }
@@ -191,21 +187,21 @@ async function withdrawStatus(req, res, next) {
 
 async function getUPIId(req, res, next) {
   console.log("POST /api/getUPIId API call made");
-  const { user_id } = req.body;
+  const { admin_id } = req.body;
   try {
     const connection = await DbUtils.getConnection();
-    const exists = await connection.manager.findOne(User_Profile, { where: { User_Id: user_id } });
+    const exists = await connection.manager.findOne(Admin, { where: { Admin_Id: admin_id } });
     if(!exists) {
         return res.status(409).json({status:false, message: 'User is not registered with us, please try another'});
     }
   
-if(exists.User_UPI_Id == null){
+if(exists.Admin_UPI_Id == null){
   return res.status(404).json({status:false,message:"Data not found"});
 }
     if (exists) {
       return res.status(200).json({
         status:true,
-        user_upi_id: exists.User_UPI_Id,
+        admin_upi_id: exists.Admin_UPI_Id,
       });
     }
     return res.status(404).json({status:false,message:"Data not found"});

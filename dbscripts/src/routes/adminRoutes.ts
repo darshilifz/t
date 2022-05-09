@@ -37,10 +37,10 @@ router.get('/leisure', checkJwtToken, adminController.lobbyHistoryFromLobbyId);
 router.post('/leisureplayer', checkJwtToken, adminController.leisurePlayerFromLobbyId);
 
 router.post('/login', checkJwtToken, adminController.adminLogin);
-router.post('/createadmin', checkJwtToken, adminController.adminCreateAdmin);
+router.post('/createadmin', adminController.adminCreateAdmin);
 router.get('/admins', checkJwtToken, adminController.getAllAdmins);
 router.post('/admins', checkJwtToken, adminController.getAdminFromAdminName);
-router.put('/admin', checkJwtToken, adminController.updateAdminFromAdminId);
+router.put('/admin',  adminController.updateAdminFromAdminId);
 router.delete('/admin', checkJwtToken, adminController.deleteAdminWithAdminId);
 
 router.post('/payments', checkJwtToken, adminController.createPayment);
