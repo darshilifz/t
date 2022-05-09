@@ -79,13 +79,46 @@ async function payInStatus(req, res, next) {
         return res.status(409).json({ status:false,message: 'User is not registered with us, please try another'});
     }
     
-    const payment = await connection
-      .getRepository(Payment)
+    // const payment = await connection
+    //   .getRepository(Payment)
+    //   .createQueryBuilder()
+    //   .orderBy("Payment_Time_Date", "DESC")
+    //   .where({ User_Id: user_id, Is_DebitCredit: false })
+    //   .excludeSelect('Payment_Image')
+    //   .take(50).getRawMany();
+
+      const payment = await connection
+      .getRepository(Payment, "payment")
       .createQueryBuilder()
+      .select("payment.Payment_Id")
+      .addSelect("payment.userIdUserId")
+      .addSelect("payment.Is_DebitCredit")
+      .addSelect("payment.Payment_Time_Date")
+      .addSelect("payment.Payment_Amount")
+      .addSelect("payment.Status")
+      .addSelect("payment.Remark")
       .orderBy("Payment_Time_Date", "DESC")
       .where({ User_Id: user_id, Is_DebitCredit: false })
-      .take(50).getRawMany();
+      .take(50)
+      .getRawMany();
 
+      // const payment = await connection
+      // .getRepository(Payment)
+      // .createQueryBuilder()
+      // .select([
+      //   'DISTINCT payment.Payment_Id"Payment_Id"',
+      //   'payment.User_Id"User_Id"',
+      //   'payment.Is_DebitCredit"Is_DebitCredit"',
+      //   'payment.Payment_Amount"Payment_Amount"',
+      //   'payment.Payment_Time_Date"Payment_Time_Date"',
+      //   'payment.Status"Status"',
+      //   'payment.Remark"Remark"',
+      // ])
+      // .from(Payment, "payment")
+      // .orderBy("Payment_Time_Date", "DESC")
+      // .where({ User_Id: user_id, Is_DebitCredit: false })
+      // .take(50).getRawMany();
+      
     
 
     //  // let data = await connection.getRepository(Payment).find({User_Id:user_id,Is_DebitCredit:false}).limit(1).sort({Payment_Time_Date: -1})
@@ -167,13 +200,28 @@ async function withdrawStatus(req, res, next) {
     //   .limit(50)
     //   .sort({ Payment_Time_Date: -1 });
 
+    // const payment = await connection
+    // .getRepository(Payment)
+    // .createQueryBuilder()
+    // .select()
+    // .orderBy("Payment_Time_Date", "DESC")
+    // .where({ User_Id: user_id, Is_DebitCredit: true })
+    // .take(50).getRawMany();
+
     const payment = await connection
-    .getRepository(Payment)
-    .createQueryBuilder()
-    .select()
-    .orderBy("Payment_Time_Date", "DESC")
-    .where({ User_Id: user_id, Is_DebitCredit: true })
-    .take(50).getRawMany();
+      .getRepository(Payment, "payment")
+      .createQueryBuilder()
+      .select("payment.Payment_Id")
+      .addSelect("payment.userIdUserId")
+      .addSelect("payment.Is_DebitCredit")
+      .addSelect("payment.Payment_Time_Date")
+      .addSelect("payment.Payment_Amount")
+      .addSelect("payment.Status")
+      .addSelect("payment.Remark")
+      .orderBy("Payment_Time_Date", "DESC")
+      .where({ User_Id: user_id, Is_DebitCredit: true })
+      .take(50)
+      .getRawMany();
 
     if (payment) {
       return res.status(200).json({status:true,payment});

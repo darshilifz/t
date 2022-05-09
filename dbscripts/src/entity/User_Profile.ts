@@ -37,8 +37,8 @@ export class User_Profile {
     @Column()
     User_Level: number;
 
-    // @Column({default:0})
-    // User_Balence:number;
+    @Column({default:0})
+    User_Balence:number;
 
       @Column({type:"varchar",nullable:true})
       User_UPI_Id: string;
